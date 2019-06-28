@@ -8746,6 +8746,7 @@ Worker.prototype.toPdf = function toPdf() {
     var pxFullHeight = canvas.height;
     var pxPageHeight = Math.floor(canvas.width * this.prop.pageSize.inner.ratio);
     var nPages = Math.ceil(pxFullHeight / pxPageHeight);
+    var lh = (this.opt.html2pdfContainer.lineHeight).replace(/[^0-9]/g,'') * 1;    
 
     // Define pageHeight separately so it can be trimmed on the final page.
     var pageHeight = this.prop.pageSize.inner.height;
@@ -8769,6 +8770,12 @@ Worker.prototype.toPdf = function toPdf() {
       // Display the page.
       var w = pageCanvas.width;
       var h = pageCanvas.height;
+
+      if (pxPageHeight % lh > 0) {
+          h = h - lh;
+          pxPageHeight = pxPageHeight - lh;
+      }
+
       pageCtx.fillStyle = 'white';
       pageCtx.fillRect(0, 0, w, h);
       pageCtx.drawImage(canvas, 0, page * pxPageHeight, w, h, 0, 0, w, h);
