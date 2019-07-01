@@ -151,8 +151,8 @@
 
 	<button onclick="useHtml()">html()</button>
 	<button onclick="useHtml2pdf()">html2pdf</button>	
-	<button onclick="useFromHtml()">fromHtml</button>
-	<button onclick="imgToPdf()">Image</button>
+	<!-- <button onclick="useFromHtml()">fromHtml</button>
+	<button onclick="imgToPdf()">Image</button> -->
 </body>
 
 <style>
@@ -173,14 +173,14 @@
 	}
 
 	p {
-		font-size: 150%;
-		line-height: 1.5;
+		font-size: 24px;
+		line-height: 36px;
 		margin: 0;
 	}
 
-	.html2pdf__container a {
-		/* line-height: 30px;
-		font-size: 20px; */
+	.html2pdf__container {
+		font-size: 24px;
+		line-height: 36px;
 		text-decoration: none;
 	}
 </style>
@@ -210,9 +210,9 @@
 		}
 
 		let pdf = new jsPDF('p', 'pt', 'a4');
-		let left = 72; // narrow margin - 1.27 cm (36)
+		let margin = 36; // narrow margin - 1.27 cm (36)
 		let srcWidth = document.getElementById('pg').style.width || '718px';
-		let scale = (595.28 - left * 2) / Math.ceil(srcWidth.replace('px', '')); // a4 pageSize 595.28
+		let scale = (595.28 - margin * 2) / Math.ceil(srcWidth.replace('px', '')); // a4 pageSize 595.28
 		// 1 mm = 3.7795275591 pixel
 		// 1 in = 96 pixel
 		// 1em = 12pt = 16px = 100%
@@ -228,9 +228,9 @@
 				scale: scale // default is window.devicePixelRatio,
 			},
 			margin: [20, 20, 20, 20],
-			// backgroundColor: 'lightblue', // this is on top of the backgroundColor of html2canvas
-			x: left,
-			y: 72,
+			// backgroundColor: 'lightblue', // this is on top of the backgroundColor of html2canvas.
+			x: margin,
+			y: margin,
 			callback: function () {
 				// pdf.save('test.pdf');
 				window.open(pdf.output('bloburl')); // to debug

@@ -3480,7 +3480,7 @@ var renderElement = exports.renderElement = function renderElement(element, opti
                     backgroundColor: backgroundColor,
                     logger: logger,
                     scale: options.scale,
-                    x: typeof options.x === 'number' ? options.x : left,
+                    x: typeof options.x === 'number' ? options.x : left, // -100000
                     y: typeof options.y === 'number' ? options.y : top,
                     width: typeof options.width === 'number' ? options.width : Math.ceil(width),
                     height: typeof options.height === 'number' ? options.height : Math.ceil(height),
@@ -3534,7 +3534,7 @@ var renderElement = exports.renderElement = function renderElement(element, opti
                     x: typeof options.x === 'number' ? options.x : left,
                     y: typeof options.y === 'number' ? options.y : top,
                     width: typeof options.width === 'number' ? options.width : Math.ceil(width),
-                    height: typeof options.height === 'number' ? options.height : Math.ceil(height)
+                    height: typeof options.height === 'number' ? options.height : Math.ceil(height) // this is the background height, not canvas height
                 };
 
                 if (Array.isArray(options.target)) {
