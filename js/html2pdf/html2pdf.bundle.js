@@ -8746,7 +8746,9 @@ Worker.prototype.toPdf = function toPdf() {
     var pxFullHeight = canvas.height;
     var pxPageHeight = Math.floor(canvas.width * this.prop.pageSize.inner.ratio);
     var lh = (this.opt.html2pdfContainer.lineHeight).replace(/[^0-9\.]/g,'') * 1;
+    var fs = (this.opt.html2pdfContainer.fontSize).replace(/[^0-9\.]/g,'') * 1;
     var r = pxPageHeight % lh;
+    let m = (lh - fs) / 2;
     var nPages = Math.ceil(pxFullHeight / pxPageHeight);
 
     // Define pageHeight separately so it can be trimmed on the final page.
@@ -8769,7 +8771,7 @@ Worker.prototype.toPdf = function toPdf() {
         pageHeight = pageCanvas.height * this.prop.pageSize.inner.width / pageCanvas.width;
       }
 
-      var drawImageHeight = (page * pxPageHeight) + r;
+      var drawImageHeight = (page * pxPageHeight) + m;
       if (page === 0) {
           drawImageHeight = 0;
       }
@@ -8779,18 +8781,16 @@ Worker.prototype.toPdf = function toPdf() {
       var h = pageCanvas.height;
 
       pageCtx.fillStyle = 'white'; // This background will show if the last page is not trimmed
-      pageCtx.fillRect(0, 0, w, h+r); // in pixels
-      pageCtx.drawImage(canvas, 0, drawImageHeight, w, h+r, 0, 0, w, h+r);
+      pageCtx.fillRect(0, 0, w, h); // in pixels
+      pageCtx.drawImage(canvas, 0, page * pxPageHeight, w, h, 0, 0, w, h);
 
-      var imageData1 = pageCtx.getImageData(0, page * pxPageHeight, w, (page * pxPageHeight) + r);
+    //   var imageData0 = pageCtx.getImageData(0, 0, w, m);
+      var imageData0 = pageCtx.getImageData(0, drawImageHeight, w, drawImageHeight + m);
       var tempCanvas = document.createElement("canvas"),
       tCtx = tempCanvas.getContext("2d");
-
       tempCanvas.width = w;
-      tempCanvas.height = r;      
-
-      tCtx.putImageData(imageData1, 0, 0);
-      tCtx.drawImage(canvas,0,0);
+      tempCanvas.height = m;
+      tCtx.putImageData(imageData0, 0, 0);
       
       console.log(tempCanvas.toDataURL());
 
