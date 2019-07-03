@@ -149,6 +149,8 @@
 		behold, it was very good. And there was evening and there was morning, the sixth day.
 	</p>
 
+	<!-- <img src="/img/IMG_3705.jpg" /> -->
+
 	<button onclick="useHtml()">html()</button>
 	<button onclick="useHtml2pdf()">html2pdf</button>
 	<!-- <button onclick="useFromHtml()">fromHtml</button>
@@ -176,12 +178,20 @@
 		font-size: 24px;
 		line-height: 36px;
 		margin: 0;
+		/* background-image: linear-gradient(to right, #69B62F, #DE3375), url('/img/IMG_3705.jpg');
+    	background-blend-mode: overlay; */
 	}
 
 	.html2pdf__container {
 		font-size: 24px;
 		line-height: 36px;
 		text-decoration: none;
+		/* background-image: url('/img/IMG_3705.jpg');
+    	background-blend-mode: luminosity; */
+	}
+
+	img {
+		width: 400px;
 	}
 </style>
 
@@ -224,7 +234,7 @@
 		pdf.html(document.getElementById('pg'), {
 			filename: 'pdf',
 			html2canvas: {
-				backgroundColor: '#fdf5e8',
+				// backgroundColor: '#fdf5e8',
 				scale: scale // default is window.devicePixelRatio,
 			},
 			margin: [20, 20, 20, 20],

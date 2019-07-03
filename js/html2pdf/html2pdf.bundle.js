@@ -8758,6 +8758,14 @@ Worker.prototype.toPdf = function toPdf() {
     var pageCanvas = document.createElement('canvas');
     var pageCtx = pageCanvas.getContext('2d');
 
+    // Create a background color canvas as the control to determine the page break
+    pageCanvas.width = canvas.width;
+    pageCanvas.height = m;
+    pageCtx.fillStyle = this.opt.html2canvas.backgroundColor || 'white'; // This background will show if the last page is not trimmed
+    pageCtx.fillRect(0, 0, canvas.width, m); // in pixels
+    pageCtx.drawImage(canvas, 0, 0, canvas.width, m, 0, 0, canvas.width, m);
+    console.log(pageCanvas.toDataURL());
+
     pageCanvas.width = canvas.width;
     pageCanvas.height = pxPageHeight;
 
@@ -8779,13 +8787,11 @@ Worker.prototype.toPdf = function toPdf() {
       // Display the page.
       var w = pageCanvas.width;
       var h = pageCanvas.height;
-
-      pageCtx.fillStyle = 'white'; // This background will show if the last page is not trimmed
+      
       pageCtx.fillRect(0, 0, w, h); // in pixels
       pageCtx.drawImage(canvas, 0, page * pxPageHeight, w, h, 0, 0, w, h);
 
-    //   var imageData0 = pageCtx.getImageData(0, 0, w, m);
-      var imageData0 = pageCtx.getImageData(0, drawImageHeight, w, drawImageHeight + m);
+      var imageData0 = pageCtx.getImageData(0, 0, w, m);
       var tempCanvas = document.createElement("canvas"),
       tCtx = tempCanvas.getContext("2d");
       tempCanvas.width = w;
