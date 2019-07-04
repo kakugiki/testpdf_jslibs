@@ -8764,7 +8764,7 @@ Worker.prototype.toPdf = function toPdf() {
     pageCtx.fillStyle = this.opt.html2canvas.backgroundColor || 'white'; // This background will show if the last page is not trimmed
     pageCtx.fillRect(0, 0, canvas.width, m); // in pixels
     pageCtx.drawImage(canvas, 0, 0, canvas.width, m, 0, 0, canvas.width, m);
-    console.log(pageCanvas.toDataURL());
+    var control = pageCanvas.toDataURL();
 
     pageCanvas.width = canvas.width;
     pageCanvas.height = pxPageHeight;
@@ -8797,8 +8797,22 @@ Worker.prototype.toPdf = function toPdf() {
       tempCanvas.width = w;
       tempCanvas.height = m;
       tCtx.putImageData(imageData0, 0, 0);
+
+      if (tempCanvas.toDataURL() != control && page !== nPages - 1) {
+        var ch = page * pxPageHeight;
+        while ( m < lh ) {
+            ch = ch - m;            
+
+            if (ch < page * pxPageHeight - lh) {                
+                break;
+            }
+        }
+        pageCtx.drawImage(canvas, 0, ch, w, h, 0, 0, w, h);
+        tempCanvas.width = w;
+        tempCanvas.height = m;
+        tCtx.putImageData(imageData0, 0, 0);
+      } // Need to be a loop to check until it's not cut off
       
-      console.log(tempCanvas.toDataURL());
 
       // Add the page to the PDF.
       if (page) this.prop.pdf.addPage();
@@ -8807,6 +8821,18 @@ Worker.prototype.toPdf = function toPdf() {
     }
   });
 };
+
+var cropCanvas = (srcCanvas, left, top, width, height) => {
+    let destCanvas = document.createElement('canvas');
+    destCanvas.width = width;
+    destCanvas.height = height;
+    destCanvas.getContenxt('2d').drawImage(
+        srcCanvas,
+        left, top, width, height,
+        0, 0, width, height
+    );
+    return destCanvas;
+}
 
 /* ----- OUTPUT / SAVE ----- */
 
