@@ -8791,6 +8791,7 @@ Worker.prototype.toPdf = function toPdf() {
       pageCtx.fillRect(0, 0, w, h); // in pixels
       pageCtx.drawImage(canvas, 0, page * pxPageHeight, w, h, 0, 0, w, h);
 
+      // Compare control with the border and move at a distance of m until control and sample are equal, i.e. both are space between lines.
       var imageData0 = pageCtx.getImageData(0, 0, w, m);
       var tempCanvas = document.createElement("canvas"),
       tCtx = tempCanvas.getContext("2d");
@@ -8798,22 +8799,18 @@ Worker.prototype.toPdf = function toPdf() {
       tempCanvas.height = m;
       tCtx.putImageData(imageData0, 0, 0);
 
-      if (tempCanvas.toDataURL() != control && page !== nPages - 1) {
+      if (tempCanvas.toDataURL() != control) {
         var ch = page * pxPageHeight;
         while ( m < lh ) {
-            ch = ch - m;            
+            ch = ch - m;
 
-            if (ch < page * pxPageHeight - lh) {                
+            if (ch < page * pxPageHeight - lh) {
                 break;
             }
         }
-        pageCtx.drawImage(canvas, 0, ch, w, h, 0, 0, w, h);
-        tempCanvas.width = w;
-        tempCanvas.height = m;
-        tCtx.putImageData(imageData0, 0, 0);
-      } // Need to be a loop to check until it's not cut off
+      }
+      pageCtx.drawImage(canvas, 0, ch, w, h, 0, 0, w, h);
       
-
       // Add the page to the PDF.
       if (page) this.prop.pdf.addPage();
       var imgData = pageCanvas.toDataURL('image/' + opt.image.type, opt.image.quality);
@@ -8826,7 +8823,7 @@ var cropCanvas = (srcCanvas, left, top, width, height) => {
     let destCanvas = document.createElement('canvas');
     destCanvas.width = width;
     destCanvas.height = height;
-    destCanvas.getContenxt('2d').drawImage(
+    destCanvas.getContext('2d').drawImage(
         srcCanvas,
         left, top, width, height,
         0, 0, width, height
