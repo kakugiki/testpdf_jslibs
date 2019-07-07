@@ -8747,27 +8747,18 @@ Worker.prototype.toPdf = function toPdf() {
     var pxPageHeight = Math.floor(canvas.width * this.prop.pageSize.inner.ratio);
     var lh = (this.opt.html2pdfContainer.lineHeight).replace(/[^0-9\.]/g,'') * 1;
     var fs = (this.opt.html2pdfContainer.fontSize).replace(/[^0-9\.]/g,'') * 1;
-    var r = pxPageHeight % lh;
-    let m = (lh - fs) / 2;
+    var r = pxPageHeight % lh * this.opt.html2canvas.scale;
+    // var m = (lh - fs) / 2;
     var nPages = Math.ceil(pxFullHeight / pxPageHeight);
-
+    
     // Define pageHeight separately so it can be trimmed on the final page.
     var pageHeight = this.prop.pageSize.inner.height;
 
     // Create a one-page canvas to split up the full image.
     var pageCanvas = document.createElement('canvas');
-    var pageCtx = pageCanvas.getContext('2d');
-
-    // Create a background color canvas as the control to determine the page break
+    var pageCtx = pageCanvas.getContext('2d');    
     pageCanvas.width = canvas.width;
-    pageCanvas.height = m;
-    pageCtx.fillStyle = this.opt.html2canvas.backgroundColor || 'white'; // This background will show if the last page is not trimmed
-    pageCtx.fillRect(0, 0, canvas.width, m); // in pixels
-    pageCtx.drawImage(canvas, 0, 0, canvas.width, m, 0, 0, canvas.width, m);
-    var control = pageCanvas.toDataURL();
-
-    pageCanvas.width = canvas.width;
-    pageCanvas.height = pxPageHeight;
+    pageCanvas.height = pxPageHeight - r;
 
     // Initialize the PDF.
     this.prop.pdf = this.prop.pdf || new jspdf_min(opt.jsPDF);
@@ -8779,37 +8770,15 @@ Worker.prototype.toPdf = function toPdf() {
         pageHeight = pageCanvas.height * this.prop.pageSize.inner.width / pageCanvas.width;
       }
 
-      var drawImageHeight = (page * pxPageHeight) + m;
-      if (page === 0) {
-          drawImageHeight = 0;
-      }
-
       // Display the page.
       var w = pageCanvas.width;
       var h = pageCanvas.height;
-      
       pageCtx.fillRect(0, 0, w, h); // in pixels
-      pageCtx.drawImage(canvas, 0, page * pxPageHeight, w, h, 0, 0, w, h);
+      pageCtx.drawImage(canvas, 0, page * (pxPageHeight - r), w, h, 0, 0, w, h);
 
-      // Compare control with the border and move at a distance of m until control and sample are equal, i.e. both are space between lines.
-      var imageData0 = pageCtx.getImageData(0, 0, w, m);
-      var tempCanvas = document.createElement("canvas"),
-      tCtx = tempCanvas.getContext("2d");
-      tempCanvas.width = w;
-      tempCanvas.height = m;
-      tCtx.putImageData(imageData0, 0, 0);
-
-      if (tempCanvas.toDataURL() != control) {
-        var ch = page * pxPageHeight;
-        while ( m < lh ) {
-            ch = ch - m;
-
-            if (ch < page * pxPageHeight - lh) {
-                break;
-            }
-        }
+      if (page == nPages - 1) {
+        pageCtx.drawImage(canvas, 0, page * pxPageHeight, w, h, 0, 0, w, h);
       }
-      pageCtx.drawImage(canvas, 0, ch, w, h, 0, 0, w, h);
       
       // Add the page to the PDF.
       if (page) this.prop.pdf.addPage();
@@ -8823,7 +8792,7 @@ var cropCanvas = (srcCanvas, left, top, width, height) => {
     let destCanvas = document.createElement('canvas');
     destCanvas.width = width;
     destCanvas.height = height;
-    destCanvas.getContext('2d').drawImage(
+    destCanvas.getContenxt('2d').drawImage(
         srcCanvas,
         left, top, width, height,
         0, 0, width, height
