@@ -1,0 +1,187 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://rawgit.com/MrRio/jsPDF/master/dist/jspdf.min.js"></script>
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
+
+<div id="tableToPrint">
+    <table ID="SelCritTableOnTable" class="SelCritTableOn" CellPadding="0" CellSpacing="0" runat="server">
+        <tr>
+            <td width="100%" class="SelCritHeaderCell">
+                <span class="SelCritHeaderText">Selection Criteria</span>
+            </td>
+        </tr>
+        <tr Height="10"></tr>
+        <tr>
+            <td>
+                <table CellPadding="0" CellSpacing="0" BorderWidth="0" runat="server">
+                    <tr>
+                        <td class="SelCritSpacerCell"></td>
+                        <td class="SelCritLabel">UT: </td>
+
+                        <td class="SelCritSpacerCell2"></td>
+                        <td id="Unittype_Cell" class="SelCritValueCell"> 1</td>
+
+                        <td class="SelCritSpacerCell"></td>
+                        <td class="SelCritLabel">AR </td>
+
+                        <td class="SelCritSpacerCell2"></td>
+                        <td id="Area_Cell" class="SelCritValueCell">2</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr Height="10"></tr>
+        <tr>
+            <td>
+                <table ID="Table2" CellPadding="0" CellSpacing="0" BorderWidth="0" runat="server">
+                    <tr>
+                        <td class="SelCritSpacerCell"></td>
+                        <td ID="TypeNo_Label_Cell" class="SelCritLabel">TNO:</td>
+
+                        <td class="SelCritSpacerCell2"></td>
+                        <td id="TypeNo_Cell" class="SelCritValueCell">
+                            356768678
+                        </td>
+
+                        <td class="SelCritSpacerCell"></td>
+                        <td class="SelCritLabel">VN: </td>
+
+                        <td class="SelCritSpacerCell2"></td>
+                        <td id="TypeVar_Cell" class="SelCritValueCell">28</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td style="height:5px"></td>
+        </tr>
+    </table>
+</div>
+
+<div id="container1"></div>
+<input type="button" id="btnFromHtmlToPDF" runat="server" value="html() with style to PDF" />
+
+<script>
+    $('#btnFromHtmlToPDF').click(function () {
+        var width = 1000;
+        var height = $(window).height();
+
+        $('#tableToPrint').prepend(
+            '<table id="tblDynamicPadding"  style="padding-top:100px;visibility:hidden;"><tr><td><span></span></td></tr></table>'
+        );
+
+        var pdf = new jsPDF('l', 'pt', /* 'letter' */ [width, height]);
+        addNewPage(pdf);
+    });
+
+    var count = 0;
+    var test;
+
+    function addNewPage(pdf) {
+        pdf.html(
+            $('#tableToPrint')[0], {
+                callback: function (output) {
+                    if (count == 0) {
+                        $('#tblDynamicPadding').remove();
+                        pdf.text(20, 40, 'RP');
+                    } else
+                        pdf.addPage();
+
+                    pdf.setPage(count + 1);
+                    pdf.text('Page ' + (count + 1), 20, 300);
+
+                    if (count < 1) {
+                        count++;
+                        addNewPage(pdf);
+                    } else
+                        // pdf.save();
+                        window.open(pdf.output('bloburl'));
+                }
+            }
+        );
+    }
+
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js')
+        .then(console.log)
+        .catch(console.error);
+    }
+
+    if (!navigator.onLine) { console.error('offline'); }
+    else console.info('online');
+</script>
+
+<style>
+    /*** BEGIN *** Style for Selection Criteria Table in Statistics Pages */
+    .SelCritTableOff {
+        /*border: solid 1px black;*/
+        width: 100%;
+        background-color: #F8FAFD;
+    }
+
+    .SelCritTableOn {
+        /*border: solid 1px black;*/
+        width: 100%;
+        background-color: #F8FAFD;
+    }
+
+    .SelCritLabel {
+        font-family: Arial, Verdana;
+        font-size: 11px;
+        /*font-weight: bold;*/
+        COLOR: black;
+        white-space: NOWRAP;
+        text-align: LEFT;
+    }
+
+    .SelCritSpacerCell {
+        width: 10px;
+    }
+
+    .SelCritSpacerCell2 {
+        width: 5px;
+    }
+
+    .SelCritValueCell {
+        border: 1px solid gray;
+        background-color: white;
+        padding-left: 3px;
+        padding-right: 3px;
+        padding-top: 1px;
+        padding-bottom: 1px;
+    }
+
+    .SelCritHeaderCell {
+        height: 18px;
+        border-bottom: 1px solid gray;
+        /*background-image: url(GrayGrad.gif)*/
+    }
+
+    .SelCritHeaderText {
+        font-family: Arial, Verdana;
+        font-size: 11px;
+        font-weight: bold;
+        color: #393945;
+        padding-left: 10px;
+        padding-top: 4px;
+        padding-bottom: 7px;
+    }
+
+    .SelCritMultilineTextBox {
+        font-family: Arial, Verdana;
+        font-size: 10px;
+        color: black;
+        background-color: white;
+        border: 0px solid white;
+        padding-left: 2px;
+        padding-right: 0px;
+        padding-top: 0px;
+        padding-bottom: 0px;
+        height: 18px;
+    }
+
+    .tdWidth {
+        width: 80px;
+    }
+
+    /*** END *** Style for Selection Criteria Table in Statistics Pages */
+</style>
