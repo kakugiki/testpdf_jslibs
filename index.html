@@ -223,10 +223,10 @@
 
 	function useHtml() {
 		// Bring the page zoom level back to 100%
-		const zoomLevel = window.innerWidth / window.outerWidth;
-		if (zoomLevel != 1) {
-			document.body.style.zoom = zoomLevel;
-		}
+		// const zoomLevel = window.innerWidth / window.outerWidth;
+		// if (zoomLevel != 1) {
+		// 	document.body.style.zoom = zoomLevel;
+		// }
 
 		let pdf = new jsPDF('p', 'pt', 'a4');
 		let margin = 36; // narrow margin - 1.27 cm (36)

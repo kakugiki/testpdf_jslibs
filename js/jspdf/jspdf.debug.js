@@ -12216,6 +12216,7 @@
         var options = Object.assign({
           async: true,
           allowTaint: true,
+          scale: (this.prop.pageSize.width * this.prop.pageSize.k) / Math.max(this.prop.src.clientWidth, this.prop.src.scrollWidth, this.prop.src.offsetWidth),
           backgroundColor: '#ffffff',
           imageTimeout: 15000,
           logging: true,
