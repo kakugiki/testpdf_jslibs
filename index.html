@@ -8,7 +8,7 @@
 
 <body>
 	<div id="div" style="width: 718px">
-		<table cellpadding=0 cellspacing=0 border=0 id="tbl" hidden>
+		<table cellpadding=0 cellspacing=0 border=0 id="tbl">
 			<tr>
 				<td>Hello Jodi L. Siebert. Below is a summary of what happened on your cases on Friday 05/31/2019</td>
 			</tr>
@@ -106,7 +106,7 @@
 				<td>&#160;</td>
 			</tr>
 		</table>
-		<p id = "pg" style="width: 718px">
+		<p id = "pg" style="width: 718px" hidden>
 			Chapter 1<br><br />
 			<sup>1</sup><a href="https://kyleschaeffer.com/css-font-size-em-vs-px-vs-pt-vs-percent" target="_blank">In the beginning God created the heavens and the earth.</a> <sup>2</sup>And the earth was waste and
 			void; and darkness was upon the face of the deep: and the Spirit of God moved upon the face of the waters.
@@ -201,6 +201,10 @@
 	img {
 		width: 400px;
 	}
+
+	table {
+		padding: 20px;
+	}
 </style>
 
 <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js"
@@ -229,9 +233,9 @@
 		// }
 
 		let pdf = new jsPDF('p', 'pt', 'a4');
-		let margin = 36; // narrow margin - 1.27 cm (36)
-		let srcWidth = document.getElementById('pg').style.width || '718px';
-		let scale = (595.28 - margin * 2) / Math.ceil(srcWidth.replace('px', '')); // a4 pageSize 595.28
+		// let margin = 36; // narrow margin - 1.27 cm (36)
+		// let srcWidth = document.getElementById('pg').style.width || '718px';
+		// let scale = (595.28 - margin * 2) / Math.ceil(srcWidth.replace('px', '')); // a4 pageSize 595.28
 		// 1 mm = 3.7795275591 pixel
 		// 1 in = 96 pixel
 		// 1em = 12pt = 16px = 100%
@@ -240,16 +244,16 @@
 			title: 'pdf'
 		});
 
-		pdf.html(document.getElementById('pg'), {
+		pdf.html(document.getElementById('tbl'), {
 			filename: 'pdf',
+			// backgroundColor: 'lightyellow',
 			html2canvas: {
-				// backgroundColor: '#fdf5e8',
-				scale: scale // default is window.devicePixelRatio,
+				backgroundColor: '#fdf5e8',
+				// scale: scale // default is window.devicePixelRatio,
 			},
-			margin: [20, 20, 20, 20],
 			// backgroundColor: 'lightblue', // this is on top of the backgroundColor of html2canvas.
-			x: margin,
-			y: margin,
+			// x: margin,
+			// y: margin,
 			callback: function () {
 				// pdf.save('test.pdf');
 				window.open(pdf.output('bloburl')); // to debug
