@@ -284,7 +284,7 @@
     }
 
 	function useHtml2pdf() {
-		var element = document.getElementById('pg');
+		var element = document.getElementById('tbl');
 		var computedFontSize = window.getComputedStyle(element).fontSize;
 		var lineHeight = window.getComputedStyle(element).lineHeight;
 
@@ -329,7 +329,7 @@
 			format: 'a4'
 		});
 		
-		var pg = document.getElementById('pg');
+		var pg = document.getElementById('tbl');
 		var marginX = 30; // left and right 15 each
 		var maxWidth = doc.internal.pageSize.width - marginX;
 		var arrpg = doc.splitTextToSize('	' + pg.innerText, maxWidth);
@@ -388,7 +388,7 @@
 
   var dd = {
     content: [{ 
-		text: '	' + document.getElementById('pg').innerText,
+		text: '	' + document.getElementById('tbl').innerText,
 		lineHeight: 1.5,
 		// leadingIndent: 30,
 		margin: [20, 20, 20, 20]
