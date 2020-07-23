@@ -1,187 +1,682 @@
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://rawgit.com/MrRio/jsPDF/master/dist/jspdf.min.js"></script>
-<script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
 
-<div id="tableToPrint">
-    <table ID="SelCritTableOnTable" class="SelCritTableOn" CellPadding="0" CellSpacing="0" runat="server">
-        <tr>
-            <td width="100%" class="SelCritHeaderCell">
-                <span class="SelCritHeaderText">Selection Criteria</span>
-            </td>
-        </tr>
-        <tr Height="10"></tr>
-        <tr>
-            <td>
-                <table CellPadding="0" CellSpacing="0" BorderWidth="0" runat="server">
-                    <tr>
-                        <td class="SelCritSpacerCell"></td>
-                        <td class="SelCritLabel">UT: </td>
+<!DOCTYPE html>
+<html>
 
-                        <td class="SelCritSpacerCell2"></td>
-                        <td id="Unittype_Cell" class="SelCritValueCell"> 1</td>
+<head> 
+        <meta charset="utf-8"> 
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Template 01</title>  	
+		<link id="BootstrapCSS" rel="stylesheet" type="text/css" href="https://myintracomm.ec.europa.eu/Style%20Library/ECCP/EC_Portal_2013/css/bootstrap/bootstrap.min.css">		
+	<style>
+		body {
+			font-family: "Times New Roman",Helvetica,Arial,sans-serif;
+			font-size: 12px;
+			margin: auto;
+		}
+		
+		.table_border{
+			border: 2px solid black !important;		
+		}
+		.table_border thead tr th{
+			border: black !important;		
+		}
+		.table_border tr td{
+			border: 1px solid black !important;		
+		}
+		
+		.table_border tr th .table-header {
+			border: 1px solid black !important;		
+		}
+		
+		@CHARSET "UTF-8";
+		
+		.page-break {
+		  page-break-after: always;
+		  page-break-inside: avoid;
+		  clear:both;
+		}
+		.page-break-before {
+		  page-break-before: always;
+		  page-break-inside: avoid;
+		  clear:both;
+		}
+		
+		button {
+			margin-top: 20px;
+		}
+		
+		#table01 {
+			margin-top: 30px;
+		}
 
-                        <td class="SelCritSpacerCell"></td>
-                        <td class="SelCritLabel">AR </td>
+		#table05 tr td.trLeft{
+			width: 30%;
+		}
+		#table05 tr td.trLeft{
+			width: 30%;
+		}
+		#table05 tr td.trRight{
+			width: 40%;	
+			text-align:right;
+			padding-right: 20px;
+		}
+		
+		#table08 {
+			width: 50% !important;
+			margin: auto !important;
+			margin-bottom: 20px !important;
+		}
+		#table08 thead tr th.table-header {
+			border: 1px solid black !important;				
+		}
+		.title {
+			font-weight: bold;
+			text-align: center;
+			font-family: "Times New Roman",Helvetica,Arial,sans-serif;
+			font-size: 19px;
+		}	
+		.title h1 {
+			font-weight: bold;
+		}	
+		.red {
+			color: #FF0000;
+			font-weight: bold;
+		}
+		.redDark {
+			color: #8B0000 !important;
+			font-weight: bold !important;
+		}
+		.underline {
+			text-decoration: underline;
+			font-weight: bold;
+		}		
+		.table-header {
+			text-align: center;
+			font-weight: bold;
+			background-color: #D3D3D3
+		}
+		
+		.custom-td-table03 {
+			width: 500px;
+		}
+		
+		.custom-td01-table11 {
+			width: 50px;
+			border-right: 1px solid Transparent !important;
+		}
+		
+		.custom-td02-table11 {
+			width: 750px;
+		}
+		
+		.custom-th01-table11 {
+			border-right: 1px solid Transparent !important;
+		}
+		
+		.custom-th02-table11 {
+			border-right: 1px solid Transparent !important;
+		}
+		
+		.header-table12, .header-table13 {
+			background-color: #D3D3D3;
+		}
+		
+		.expertise div, .pmrJustification div, .bcJustification div {
+			text-align: left !important;
+		}
+		.expertise div ul, .pmrJustification div ul, .bcJustification div ul{
+			text-align: left !important;
+		}		
+		.expertise div ul li, .pmrJustification div ul li, .bcJustification div ul li{
+			text-align: left !important;
+		}		
+		
+		.expertise div h1, .pmrJustification div h1, .bcJustification div h1{
+			font-size: 16px !important;	
+			margin-top: 20px;
+			margin-bottom: 20px;			
+		}	
+	</style>
+</head>
 
-                        <td class="SelCritSpacerCell2"></td>
-                        <td id="Area_Cell" class="SelCritValueCell">2</td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-        <tr Height="10"></tr>
-        <tr>
-            <td>
-                <table ID="Table2" CellPadding="0" CellSpacing="0" BorderWidth="0" runat="server">
-                    <tr>
-                        <td class="SelCritSpacerCell"></td>
-                        <td ID="TypeNo_Label_Cell" class="SelCritLabel">TNO:</td>
+<body id="toPDF">
 
-                        <td class="SelCritSpacerCell2"></td>
-                        <td id="TypeNo_Cell" class="SelCritValueCell">
-                            356768678
-                        </td>
+		<div id="result">
+			<div id="target">
+				<div class="container-fluid">			
+					<p id="generateButton" style="display: none;"><button type="button" class="btn btn-primary btn-lg" onclick="generatePDF()">Generate PDF</button></p>
+					<div id="content">
+						<table id="table01" class="table table-bordered table_border">						
+							<tbody>	
+								<tr>
+									<td colspan="2"><b>TITLE OF TECHNICAL ANNEX:</b> <strong class="red">EDC - Support and Assistance (Strzebinczyk, Bonmariage)</strong></td>
+								</tr>							
+								<tr>
+									<td><b>RESPONSIBLE UNIT:</b> <strong class="red">ESTAT.A.3</strong></td>
+									<td><b>OTHER UNITS INVOLVED:</b> </td>
+								</tr>
+							</tbody>					
+						</table>
+						
+						<div class="title">
+							<h1>TECHNICAL ANNEX FOR INTRA MUROS IT</h1>
+							<h1 class="red">"TIME &amp; MEANS"</h1>
+							<h1>General info / checklist on compliance</h1>					
+						</div>		
 
-                        <td class="SelCritSpacerCell"></td>
-                        <td class="SelCritLabel">VN: </td>
+						<table id="table02" class="table table-bordered table_border">
+							<thead>
+							  <tr>
+								<th colspan="3" class="table-header">BUDGET INFO</th>
+							  </tr>
+							</thead>
+							<tbody>						
+								<tr>
+									<td><b>BIFI ID N°:</b> <strong class="red">32368</strong></td>
+									<td>
+										<b>FD ID:</b> <strong class="red">5523-2020</strong>
+									</td>
+									<td><b>CONTRACT N°:</b> <strong class="red">2020.0021</strong></td>
+								</tr>
+							</tbody>					
+						</table>	
+										
+						<table id="table03" class="table table-bordered table_border">					
+							<tbody>	
+								<tr>
+									<td class="custom-td-table03" colspan="2" rowspan="3">
+										<p><b>BUDGET LINE</b></p>
+										
+											<div class="checkbox">
+												<label><input type="checkbox" checked="checked" onclick="return false;"><b>ESTAT OPERATIONAL</b></label>
+											</div>
+										
+																			
+										<br>									
+										
+											<div class="checkbox">
+												<label><input type="checkbox" onclick="return false;"><b>OTHER (SPECIFIY)</b></label>
+											</div>
+										
+									
+									</td>														
+									<td class="table-header">1ST IN CASCADE</td>
+									<td class="table-header">2ND IN CASCADE</td>
+									<td class="table-header">3RD IN CASCADE</td>
+									<td class="table-header">4TH IN CASCADE</td>
+									<td class="table-header">5TH IN CASCADE</td>
+								</tr>
+								
+								<tr>							
+									<td class="table-header" colspan="5">TOTAL AMOUNT FORESEEN FOR CONTRACT</td>							
+								</tr>
+								
+								<tr>						
+									<td class="text-center">193032.00 €</td>
+									<td class="text-center">187056.00 €</td>
+									<td class="text-center">213672.00 €</td>
+									<td class="text-center">0.00 €</td>
+									<td class="text-center">0.00 €</td>
+								</tr>
+								
+								<tr>
+									<td class="table-header">PROFILE</td>
+									<td class="table-header">LEVEL</td>
+									<td colspan="5" class="table-header">DAILY RATE</td>
+								</tr>
+								
+								<tr>
+									<td class="text-center">Support Manager</td>
+									<td class="text-center">5</td>
+									<td class="text-center">482.58</td>
+									<td class="text-center">467.64</td>
+									<td class="text-center">534.18</td>
+									<td class="text-center">0.00</td>
+									<td class="text-center">0.00</td>
+								</tr>
+								<tr>
+									<td class="text-center">Support Manager</td>
+									<td class="text-center">5</td>
+									<td class="text-center">482.58</td>
+									<td class="text-center">467.64</td>
+									<td class="text-center">534.18</td>
+									<td class="text-center">0.00</td>
+									<td class="text-center">0.00</td>
+								</tr>
+							</tbody>					
+						</table>
+						
+						<table id="table04" class="table table-bordered table_border">
+							<thead>
+							  <tr>
+								<th colspan="6" class="table-header">TRACKING IT EXPENDITURE, IN PERCENTAGE</th>
+							  </tr>
+							</thead>
+							<tbody>		
+								<tr>
+									<td class="text-center"><b>Development</b><br> %</td>
+									<td class="text-center"><b>IT Maintenance</b><br>50 %</td>
+									<td class="text-center"><b>IT Support</b><br>50 %</td>
+									<td class="text-center"><b>IS Licences</b><br> %</td>
+									<td class="text-center"><b>ICT Infrastructure</b><br> %</td>
+									<td class="text-center"><b>ICT Training</b><br> %</td>
+								</tr>
+							</tbody>					
+						</table>
+						
+						<table id="table05" class="table table-bordered">
+							<thead>
+							  <tr>
+								<th class="table-header">OTHER INFO</th>
+							  </tr>
+							</thead>
+							<tbody>						
+								<tr>
+									<td>
+										<p><b>FRAMEWORK CONTRACT + LOT  (DIGIT/ESTAT/OTHER):</b></p><br>
+										<table>
+											<tbody><tr>
+												<td>
+													<p><b>FC N°: </b></p>
+												</td>
+												<td>
+													<p style="margin-left:35px;"><strong class="red"></strong></p>
+												</td>
+											</tr>
+											<tr>
+												<td>
+													<p><b>LOT N°: </b></p>
+												</td>
+												<td>
+													<p style="margin-left:35px;"><strong class="red">Lot4    Administration and support of information systems and ICT configurations in Belgium, Luxembourg, Ispra, Seville, Petten, Karlruhe, Geel &amp; Grange</strong></p>
+												</td>	
+											</tr>
+											<tr>
+												<td>
+													<p><b>TITLE FC: </b></p>
+												</td>
+												<td>
+													<p style="margin-left:35px;"><strong class="red">DIGIT-TM</strong></p>
+												</td>
+											</tr>
+											<tr>
+												<td>
+													<p><b>NAME OF 1ST COMPANY/CONSORTIUM  IN CASCADE: </b>&nbsp;</p>
+												</td>
+												<td>
+													<p style="margin-left:35px;"><strong class="redDark underline">Cronos International</strong></p>
+												</td>											
+											</tr>										
+										</tbody></table>									
+										<br>
+									</td>
+								</tr>
+							</tbody>					
+						</table>
+						
+						<table id="table06" class="table table-bordered table_border">
+							<thead>
+							  <tr>
+								<th colspan="7" class="table-header">DETAILS OF PROFILE(S)</th>
+							  </tr>
+							</thead>
+							<tbody>						
+								<tr>
+									<td class="table-header">Profile</td>
+									<td class="table-header">Level</td>
+									<td class="table-header">Specific Expertise</td>
+									<td class="table-header">Number of Days</td>
+									<td class="table-header">Service Provider / Sysper Code</td>
+									<td class="table-header">End Date of Current Contract</td>
+									<td class="table-header">Type of POST</td>
+								</tr>
+								
+								<tr>
+									<td class="text-center">Support Manager</td>
+									<td class="text-center">5</td>
+									<td class="text-center"><div class="expertise"><div class="ExternalClass20CE6EEA878246A28BB6DF5D3F2C62DE"><p>​Knowledge areas: Client / server systems; Web application development, including web services; SDMX</p><p>Practices and methodology: ITIL</p><p>Technologies: Java SE/EE; HTML / Javascript / CSS; Oracle Weblogic; Oracle Database; Unix &amp; Linux; JSON</p><p>Frameworks and tools: ECAS; JIRA; Bitbucket; Bamboo; Struts; Eclipse</p></div></div></td>
+									<td class="text-center">220</td>
+									<td class="text-center">STRZEBINCZYK Piotr <br><br> 270502</td>
+									<td class="text-center">27/03/2020</td>
+									<td class="text-center">RENEWAL with same TA</td>
+								</tr>
+								<tr>
+									<td class="text-center">Support Manager</td>
+									<td class="text-center">5</td>
+									<td class="text-center"><div class="expertise"><div class="ExternalClassEE1ED84D6F1B4BD086D43A2D1F1B2107"><p>​Knowledge areas: Client / server systems; Web application development, including web services; SDMX</p><p>Practices and methodology: ITIL</p><p>Technologies: Java SE/EE; HTML / Javascript / CSS; Oracle Weblogic; Oracle Database; Unix &amp; Linux; JSON</p><p>Frameworks and tools: ECAS; JIRA; Bitbucket; Bamboo; Struts; Eclipse<span aria-hidden="true"></span></p></div></div></td>
+									<td class="text-center">180</td>
+									<td class="text-center">BONMARIAGE Andre <br><br> 99535</td>
+									<td class="text-center">30/06/2020</td>
+									<td class="text-center">RENEWAL with same TA</td>
+								</tr>
+							</tbody>					
+						</table>	
+										
+						<table id="table07" class="table table-bordered table_border">
+							<tbody>						
+								<tr>
+									<td><b>TOTAL No OF DAYS OF INITIAL REQUEST:</b> 2000</td>
+								</tr>
+								<tr>
+									<td><b>No OF DAYS USED BY PREVIOUS CONTRACT(S):</b> 560</td>
+								</tr>
+								<tr>
+									<td><b>No OF DAYS FOR THIS SPECIFIC CONTRACT:</b> 400</td>
+								</tr>
+							</tbody>					
+						</table>					
+						
+						<div>
+							<h3><b>PREVIOUS CONTRACTS</b></h3>				
+						</div>
+						
+						<table id="table08" class="table table-bordered table_border" width="75%">
+							<thead>
+							  <tr>
+								<th class="table-header">Contract Number</th>
+								<th class="table-header">eRequestNo</th>
+								<th class="table-header">Year</th>
+								<th class="table-header">InitialRequest</th>
+							  </tr>
+							</thead>
+							<tbody>	
+								<tr>
+									<td class="text-center"></td>
+									<td class="text-center"></td>
+									<td class="text-center"></td>
+									<td class="text-center"></td>
+								</tr>
+							</tbody>
+						</table>					
+						
+						<table id="table09" class="table table-bordered table_border" width="75%">
+							<tbody>
+								<tr>
+									<td colspan="2"><b>EXPECTED END DATE OF PREVIOUS CONTRACT:</b> <strong class="red">30/06/2020</strong></td>
+								</tr>
+								<tr>
+									<td><b>ESTIMATED START DATE:</b> <strong class="red">30/03/2020</strong></td>
+									<td><b>ESTIMATED END DATE:</b> <strong class="red">31/12/2021</strong></td>
+								</tr>
+							</tbody>
+						</table>
+						
+						<table id="table10" class="table table-bordered table_border">
+							<thead>
+							  <tr>
+								<th colspan="2" class="table-header">ORGANISATION</th>
+							  </tr>
+							</thead>
+							<tbody>						
+								<tr>
+									<td>
+										<p><b>PROJECT MANAGER - CONTACT:</b></p>
+										<p><strong class="red">Libor KRAL</strong></p>
+										<p><strong class="red">Libor.KRAL@ec.europa.eu</strong></p>
+									</td>
+									
+									<td>
+										<p><b>PROJECT OWNER - HEAD OF UNIT:</b></p>
+										<p><strong class="red">Eduardo BARREDO CAPELOT</strong></p>
+										<p><strong class="red">Eduardo.Barredo-Capelot@ec.europa.eu</strong></p>
+									</td>
+								</tr>
+							</tbody>					
+						</table>
+						
+						<table id="table11" class="table table-bordered table_border">
+							<thead>
+							  <tr>
+								<th class="table-header custom-th01-table11"></th>
+								<th class="table-header">COMPLIANCE</th>
+								<th class="table-header"></th>
+								<th class="table-header"></th>
+							  </tr>
+							  
+							  <tr>
+								<th class="table-header custom-th02-table11"></th>
+								<th class="table-header"></th>
+								<th class="table-header">YES</th>
+								<th class="table-header">NO</th>
+							  </tr>
+							</thead>
+							<tbody>						
+								<tr>
+									<td class="custom-td01-table11">1.</td>
+									<td class="custom-td02-table11">
+										<p>Is this activity foreseen in the <u>PMR</u></p><br>
+										<p>PMR CODE<sup>1</sup>: <strong class="red">IT4diss</strong></p><br>
+										<p>If 'No', add justification note on specific need/urgency.</p><br>
+										<div class="pmrJustification"></div>
+									</td>
+									
+									<td>
+											<div class="checkbox text-center">
+												<label><input type="checkbox" checked="checked" onclick="return false;"></label>
+											</div>
+										
+									</td>
+									
+									<td>
+											<div class="checkbox text-center">
+												<label><input type="checkbox" onclick="return false;"></label>
+											</div>										
+										
+									</td>							
+								</tr>
+								<tr>
+									<td class="custom-td01-table11">2.</td>
+									<td class="custom-td02-table11">
+										<p>Has a Business Case Document been done and added to PMR? </p><br>
+										<p>If 'No', <strong>explain</strong> why no Business Case Document has been established for this project.</p><br>
+										<div class="bcJustification"></div>
+									</td>
+									
+									<td>
+											<div class="checkbox text-center">
+												<label><input type="checkbox" checked="checked" onclick="return false;"></label>
+											</div>
 
-                        <td class="SelCritSpacerCell2"></td>
-                        <td id="TypeVar_Cell" class="SelCritValueCell">28</td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-        <tr>
-            <td style="height:5px"></td>
-        </tr>
-    </table>
-</div>
+									</td>
+									
+									<td>
+											<div class="checkbox text-center">
+												<label><input type="checkbox" onclick="return false;"></label>
+											</div>
 
-<div id="container1"></div>
-<input type="button" id="btnFromHtmlToPDF" runat="server" value="html() with style to PDF" />
+									</td>							
+								</tr>
+							</tbody>					
+						</table>
+						
+						<div>
+							<p><sup>1</sup>PMR codes are either numbers or abbreviations and identify  a line in <u>PMR.</u></p><br>
+						</div>
+						
+						<table id="table12" class="table table-bordered table_border">
+							<thead>
+							  <tr>
+								<th colspan="3" class="header-table12"> 
+									<ol start="3">
+									  <li>Criteria justifying intra muros services as opposed to extra muros service:</li>
+									</ol>
+								</th>
+							  </tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td><b>What share of tasks to be provided ...</b></td>
+									<td class="text-center"><b>&lt;50%</b></td>
+									<td class="text-center"><b>≥50%</b></td>	
+								</tr>
+								
+								<tr>
+									<td>
+										<ul>
+										  <li>is of short duration (short = days or very few weeks)</li>
+										</ul>  
+									</td>		
+									<td class="text-center">
 
+									</td>									
+									<td class="text-center">
+
+									</td>									
+								</tr>
+								
+								<tr>
+									<td>
+										<ul>
+										  <li>is process oriented, as opposed to project oriented</li>
+										</ul>
+									</td>						
+									<td class="text-center">
+
+									</td>									
+									<td class="text-center">
+
+									</td>			
+								</tr>
+								
+								<tr>
+									<td>
+										<ul>
+										  <li>is maintenance orientated as opposed to development orientated</li>
+										</ul>
+									</td>
+									<td class="text-center">
+
+									</td>									
+									<td class="text-center">
+
+									</td>	
+								</tr>
+								
+								<tr>
+									<td>
+										<ul>
+										  <li>requires frequent interaction with users</li>
+										</ul>
+									</td>
+									<td class="text-center">
+
+									</td>									
+									<td class="text-center">
+
+									</td>	
+								</tr>
+								
+								<tr>
+									<td>
+										<ul>
+										  <li>requires access to confidential data</li>
+										</ul>
+									</td>
+									<td class="text-center">
+											Yes (&lt;50%)	
+
+									</td>									
+									<td class="text-center">
+
+									</td>	
+								</tr>
+								
+								<tr>
+									<td>
+										<ul>
+										  <li>is impossible to specify in advance</li>
+										</ul>
+									</td>
+									<td class="text-center">
+
+									</td>									
+									<td class="text-center">
+
+									</td>
+								</tr>
+								
+								<tr>
+									<td>
+										<ul>
+										  <li>requires response times measured in hours/days rather than weeks/months</li>
+										</ul>
+									</td>
+									<td class="text-center">
+
+									</td>									
+									<td class="text-center">
+
+									</td>
+								</tr>
+								
+								<tr>
+									<td>
+										<ul>
+										  <li>other, specify another criterion if relevant</li>
+										</ul>
+									</td>
+									<td class="text-center">
+
+									</td>									
+									<td class="text-center">
+
+									</td>
+								</tr>
+							</tbody>					
+						</table>
+						
+						<table id="table13" class="table table-bordered">						
+							<thead>
+							  <tr>
+								<th class="header-table13">GENERAL COMMENTS</th>
+							  </tr>
+							</thead>
+							<tbody>
+							  <tr>
+								<td><div class="ExternalClass1C08ED2E7BBC4AC68ABDA70BE290D4DB"><div></div><p>​</p></div></td>
+							  </tr>
+							</tbody>					
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+
+
+
+
+
+
+    <button onclick="download()">jspdf</button>
+</body>
+
+ <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js"
+    integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/" crossorigin="anonymous">
+</script> -->
+<script src="/js/jspdf/jspdf.debug.js"></script>
+<script src="https://code.jquery.com/jquery-git.js"></script>
+<script src="/lib/html2canvas/html2canvas.1.0.0-rc.5.js"></script>
+<!-- html2canvas 1.0.0-alpha.11 or higher version is needed -->
 <script>
-    $('#btnFromHtmlToPDF').click(function () {
-        var width = 1000;
-        var height = $(window).height();
+    function download() {
+        let pdf = new jsPDF('p', 'pt', 'a4');
+        let srcwidth = document.getElementById('toPDF').scrollWidth;
 
-        $('#tableToPrint').prepend(
-            '<table id="tblDynamicPadding"  style="padding-top:100px;visibility:hidden;"><tr><td><span></span></td></tr></table>'
-        );
-
-        var pdf = new jsPDF('l', 'pt', /* 'letter' */ [width, height]);
-        addNewPage(pdf);
-    });
-
-    var count = 0;
-    var test;
-
-    function addNewPage(pdf) {
-        pdf.html(
-            $('#tableToPrint')[0], {
-                callback: function (output) {
-                    if (count == 0) {
-                        $('#tblDynamicPadding').remove();
-                        pdf.text(20, 40, 'RP');
-                    } else
-                        pdf.addPage();
-
-                    pdf.setPage(count + 1);
-                    pdf.text('Page ' + (count + 1), 20, 300);
-
-                    if (count < 1) {
-                        count++;
-                        addNewPage(pdf);
-                    } else
-                        // pdf.save();
-                        window.open(pdf.output('bloburl'));
-                }
+        pdf.html(document.getElementById('toPDF'), {
+            html2canvas: {
+                scale: 595.28 / srcwidth,
+                backgroundColor: '#fdf5e8',
+            },
+            filename: 'jspdf',
+            // x: 18,
+            // y: 18,
+            callback: function () {
+                window.open(pdf.output('bloburl'));
             }
-        );
+        });
     }
-
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js')
-        .then(console.log)
-        .catch(console.error);
-    }
-
-    if (!navigator.onLine) { console.error('offline'); }
-    else console.info('online');
 </script>
 
-<style>
-    /*** BEGIN *** Style for Selection Criteria Table in Statistics Pages */
-    .SelCritTableOff {
-        /*border: solid 1px black;*/
-        width: 100%;
-        background-color: #F8FAFD;
-    }
-
-    .SelCritTableOn {
-        /*border: solid 1px black;*/
-        width: 100%;
-        background-color: #F8FAFD;
-    }
-
-    .SelCritLabel {
-        font-family: Arial, Verdana;
-        font-size: 11px;
-        /*font-weight: bold;*/
-        COLOR: black;
-        white-space: NOWRAP;
-        text-align: LEFT;
-    }
-
-    .SelCritSpacerCell {
-        width: 10px;
-    }
-
-    .SelCritSpacerCell2 {
-        width: 5px;
-    }
-
-    .SelCritValueCell {
-        border: 1px solid gray;
-        background-color: white;
-        padding-left: 3px;
-        padding-right: 3px;
-        padding-top: 1px;
-        padding-bottom: 1px;
-    }
-
-    .SelCritHeaderCell {
-        height: 18px;
-        border-bottom: 1px solid gray;
-        /*background-image: url(GrayGrad.gif)*/
-    }
-
-    .SelCritHeaderText {
-        font-family: Arial, Verdana;
-        font-size: 11px;
-        font-weight: bold;
-        color: #393945;
-        padding-left: 10px;
-        padding-top: 4px;
-        padding-bottom: 7px;
-    }
-
-    .SelCritMultilineTextBox {
-        font-family: Arial, Verdana;
-        font-size: 10px;
-        color: black;
-        background-color: white;
-        border: 0px solid white;
-        padding-left: 2px;
-        padding-right: 0px;
-        padding-top: 0px;
-        padding-bottom: 0px;
-        height: 18px;
-    }
-
-    .tdWidth {
-        width: 80px;
-    }
-
-    /*** END *** Style for Selection Criteria Table in Statistics Pages */
-</style>
+</html>
