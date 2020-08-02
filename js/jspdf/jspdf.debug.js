@@ -12168,10 +12168,11 @@
       // Set up function prerequisites.
       var prereqs = [function checkSrc() {
         let source = this.prop.src;
-        source.removeAttribute('style');
+        source.style.width = ''; // this doesn't work if width is not set from in-line style but style sheet
         let c = source.children;
         for (let i = 0; i < c.length; i++) {
-          c[i].removeAttribute('style');
+          c[i].style.width = ''
+          // c[i].removeAttribute('style');
         }
         return source || this.error('Cannot duplicate - no source HTML.');
       }, function checkPageSize() {

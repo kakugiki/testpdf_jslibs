@@ -9,7 +9,7 @@
 <body>
 	<div id="2pdf">
 	<!-- <div id="div" style="background-image: url('/img/IMG_3705.jpg'); width: 718px"> -->
-		<table cellpadding=0 cellspacing=0 border=0 id="tbl" style="width: 718px;">			
+		<table cellpadding=0 cellspacing=0 border=0 id="tbl" style="width: 718px;" hidden>			
 			<tr>
 				<td>Hello xxx. Below is a summary of what happened on your cases on Friday 05/31/2019</td>
 			</tr>
@@ -112,7 +112,7 @@
 			<li>List 3</li>
 			<li>List 4</li>
 		</ul>
-		<p id="page" hidden>
+		<p id="page">
 			Chapter 1<br><br />
 			<sup>1</sup><a href="https://kyleschaeffer.com/css-font-size-em-vs-px-vs-pt-vs-percent" target="_blank">In
 				the beginning God created the heavens and the earth.</a> <sup>2</sup>And the earth was waste and
@@ -260,7 +260,7 @@
 		font-size: 24px;
 		line-height: 36px;
 		margin: 0;
-		/* width: 718px; */
+		width: 718px;
 		/* background-image: linear-gradient(to right, #69B62F, #DE3375), url('/img/IMG_3705.jpg');
     	background-blend-mode: overlay; */
 	}
@@ -279,6 +279,7 @@
 
 	table {
 		padding: 20px;
+		width: 718px;
 	}
 </style>
 
@@ -317,14 +318,18 @@
 
     function useHtml() {
         let pdf = new jsPDF('p', 'pt', 'a4');
-
-        // document.getElementById('tbl').removeAttribute('style'); // to remove the source style of width
+		let margin = 18; // narrow margin - 1.27 cm (36)
+		let srcWidth = document.getElementById('2pdf').style.width || '718px';
+		let scale = (595.28 - margin * 2) / Math.ceil(srcWidth.replace('px', '')); // a4 pageSize 595.28
+		
         pdf.html(document.getElementById('2pdf'), {
             width: 250, // this works under 2 conditions: 1) containerCSS can take this.opt.width (updated html.js); 2) source style, if any, is removed
-            html2canvas: {
+			height: 250,
+			html2canvas: {
                 backgroundColor: 'lightyellow',
                 width: 350, // this only affects backgroundColor, not content
-                height: 150,
+				height: 150,
+				scale: scale,
             },
             backgroundColor: 'lightblue', // this overlays the backgroundColor setting from html2canvas.
             callback: function () {
