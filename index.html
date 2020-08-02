@@ -3,13 +3,13 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width,initial-scale=1">
-	<title></title>
+	<title>JsPDF</title>
 </head>
 
 <body>
-	<div id="div">
+	<div id="2pdf">
 	<!-- <div id="div" style="background-image: url('/img/IMG_3705.jpg'); width: 718px"> -->
-		<table cellpadding=0 cellspacing=0 border=0 id="tbl">			
+		<table cellpadding=0 cellspacing=0 border=0 id="tbl" style="width: 718px;">			
 			<tr>
 				<td>Hello xxx. Below is a summary of what happened on your cases on Friday 05/31/2019</td>
 			</tr>
@@ -106,7 +106,13 @@
 				<td>&#160;</td>
 			</tr>
 		</table>
-		<p id="pg" style="width: 718px" hidden>
+		<ul hidden>
+			<li>List 1 In the beginning God created the heavens and the earth. </li>
+			<li>List 2</li>
+			<li>List 3</li>
+			<li>List 4</li>
+		</ul>
+		<p id="page" hidden>
 			Chapter 1<br><br />
 			<sup>1</sup><a href="https://kyleschaeffer.com/css-font-size-em-vs-px-vs-pt-vs-percent" target="_blank">In
 				the beginning God created the heavens and the earth.</a> <sup>2</sup>And the earth was waste and
@@ -221,8 +227,9 @@
 	<!-- <img src="/img/download.gif" /> -->
 
 	<button onclick="useHtml()">html()</button>
+	<button onclick="toCanvas()">html2canvas</button>
 	<button onclick="useHtml2pdf()">html2pdf</button>
-	<button onclick="useFromHtml()">fromHtml</button>
+	<!-- <button onclick="useFromHtml()">fromHtml</button> -->
 	<button onclick="imgToPdf()">Image</button>
 	<button onclick="textToPdf()">Text</button>
 	<button onclick="print()">pdfmake</button>
@@ -253,17 +260,18 @@
 		font-size: 24px;
 		line-height: 36px;
 		margin: 0;
+		/* width: 718px; */
 		/* background-image: linear-gradient(to right, #69B62F, #DE3375), url('/img/IMG_3705.jpg');
     	background-blend-mode: overlay; */
 	}
 
-	.html2pdf__container {
+	/* .html2pdf__container {
 		font-size: 24px;
 		line-height: 36px;
 		text-decoration: none;
-		/* background-image: url('/img/IMG_3705.jpg');
-    	background-blend-mode: luminosity; */
-	}
+		background-image: url('/img/IMG_3705.jpg');
+    	background-blend-mode: luminosity;
+	} */
 
 	img {
 		width: 400px;
@@ -293,45 +301,38 @@
 <script>
 	'use strict';
 
-	function useHtml() {
-		// Bring the page zoom level back to 100%
-		// const zoomLevel = window.innerWidth / window.outerWidth;
-		// if (zoomLevel != 1) {
-		// 	document.body.style.zoom = zoomLevel;
-		// }
-
+	function toCanvas() {
 		let pdf = new jsPDF('p', 'pt', 'a4');
-		let margin = 18; // narrow margin - 1.27 cm (36)
-		// let srcWidth = document.getElementById('div').style.width || '718px';
-		// let scale = (595.28 - margin * 2) / Math.ceil(srcWidth.replace('px', '')); // a4 pageSize 595.28
-		// 1 mm = 3.7795275591 pixel
-		// 1 in = 96 pixel
-		// 1em = 12pt = 16px = 100%
-
-		pdf.setProperties({
-			title: 'pdf'
-		});
-
-		pdf.html(document.getElementById('div'), {
-			filename: 'pdf',
-			html2canvas: {
-				backgroundColor: '#fdf5e8',
-				// scale: scale // default is window.devicePixelRatio,
-				// scrollX: 0,
-				// scrollY: 0
-			},
-			// backgroundColor: 'lightblue', // this is on top of the backgroundColor of html2canvas.
-			// x: margin,
-			// y: margin,
-			// margin: [20, 20, 20, 20],
-			callback: function () {
-				// pdf.save('test.pdf');
-				window.open(pdf.output('bloburl')); // to debug
-				// let data = URL.createObjectURL(pdf.output("blob"));
-				// let win = window.open(data);
-			}
+		let renderDiv = document.querySelector("#tbl"); // doesn't work with parent element, #2pdf?
+		html2canvas(renderDiv, {
+			backgroundColor: 'lightblue',
+			width: 150,
+			height: 150,
+		}).then(canvas => {
+			document.querySelector("#tbl").appendChild(canvas);
+			// pdf.addImage(canvas, 0, 0, 150, 150);
+			// window.open(pdf.output('bloburl'));
 		});
 	}
+
+    function useHtml() {
+        let pdf = new jsPDF('p', 'pt', 'a4');
+
+        // document.getElementById('tbl').removeAttribute('style'); // to remove the source style of width
+        pdf.html(document.getElementById('2pdf'), {
+            width: 250, // this works under 2 conditions: 1) containerCSS can take this.opt.width (updated html.js); 2) source style, if any, is removed
+            html2canvas: {
+                backgroundColor: 'lightyellow',
+                width: 350, // this only affects backgroundColor, not content
+                height: 150,
+            },
+            backgroundColor: 'lightblue', // this overlays the backgroundColor setting from html2canvas.
+            callback: function () {
+                window.open(pdf.output('bloburl')); // or save as pdf
+                // document.getElementById('tbl').setAttribute('style','width: 718px'); // re-set the style after pdf conversion
+            }
+        });
+    }
 
 	function useFromHtml() {
 		var pdf = new jsPDF('p', 'pt', 'a4');
@@ -356,12 +357,12 @@
 	}
 
 	function useHtml2pdf() {
-		var element = document.getElementById('div');
+		var element = document.getElementById('2pdf');
 		var computedFontSize = window.getComputedStyle(element).fontSize;
 		var lineHeight = window.getComputedStyle(element).lineHeight;
 
 		var opt = {
-			margin: 1, // 25.4 mm standard margin (1 inch)
+			margin: 0.5, // 25.4 mm standard margin (1 inch)
 			// backgroundColor: '#cde7f0', // this is on top of the backgroundColor of html2canvas
 			filename: 'Test.pdf',
 			image: {
@@ -401,7 +402,7 @@
 			format: 'a4'
 		});
 
-		var pg = document.getElementById('div');
+		var pg = document.getElementById('2pdf');
 		var marginX = 30; // left and right 15 each
 		var maxWidth = doc.internal.pageSize.width - marginX;
 		var arrpg = doc.splitTextToSize('	' + pg.innerText, maxWidth);
@@ -425,7 +426,7 @@
 			const imgWidth = this.width;
 			const imgHeight = this.height;
 			const imgRatio = imgWidth / imgHeight;
-			console.log(imgWidth)
+
 			pdf.deletePage(1);
 			if (imgRatio > 0) {
 				pdf.addPage([imgWidth, imgHeight]);
@@ -461,7 +462,7 @@
 
 	var dd = {
 		content: [{
-			text: '	' + document.getElementById('div').innerText,
+			text: '	' + document.getElementById('2pdf').innerText,
 			lineHeight: 1.5,
 			// leadingIndent: 30,
 			margin: [20, 20, 20, 20]
@@ -477,8 +478,7 @@
 	};
 </script>
 
-<a
+<!-- <a
 	href="data:image/png;base64,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">Sample
-	break</a>
-
+	break</a> -->
 </html>

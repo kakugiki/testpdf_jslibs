@@ -12167,7 +12167,13 @@
     Worker.prototype.toContainer = function toContainer() {
       // Set up function prerequisites.
       var prereqs = [function checkSrc() {
-        return this.prop.src || this.error('Cannot duplicate - no source HTML.');
+        let source = this.prop.src;
+        source.removeAttribute('style');
+        let c = source.children;
+        for (let i = 0; i < c.length; i++) {
+          c[i].removeAttribute('style');
+        }
+        return source || this.error('Cannot duplicate - no source HTML.');
       }, function checkPageSize() {
         return this.prop.pageSize || this.setPageSize();
       }];
@@ -12185,7 +12191,13 @@
         var containerCSS = {
           position: 'relative',
           display: 'inline-block',
-          width: Math.max(this.prop.src.clientWidth, this.prop.src.scrollWidth, this.prop.src.offsetWidth) + 'px',
+          width: 
+            this.opt.width + 'px' || 
+            Math.max(
+              this.prop.src.clientWidth,
+              this.prop.src.scrollWidth,
+              this.prop.src.offsetWidth
+            ) + "px",
           left: 0,
           right: 0,
           top: 0,
@@ -12263,10 +12275,9 @@
         var options = Object.assign({
           async: true,
           allowTaint: true,
-          scale: this.opt.scale || 1, // ToDO: need to look into this later
-          scrollX: this.opt.scrollX || 0,
-          scrollY: this.opt.scrollY || 0,
-          // backgroundColor: '#ffffff', // this will be overlayed by containerCSS
+          scale: 1,
+          scrollX: 0,
+          scrollY: 0,
           imageTimeout: 15000,
           logging: true,
           proxy: null,

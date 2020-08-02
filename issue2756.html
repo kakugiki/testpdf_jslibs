@@ -1,0 +1,114 @@
+<!doctype html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<title></title>
+</head>
+
+<body>
+	<p id="demo"></p>
+	<button onclick="useHtml()">html.js</button>
+	<button onclick="html2canvas()">html2canvas</button>
+</body>
+
+<style>
+	img {
+		opacity: 0.5;
+	}
+
+	td {
+		border: none;
+		border-width: 1px;
+		padding-left: 5px;
+		padding-right: 5px;
+		padding-top: 1px;
+		padding-bottom: 1px;
+		font: 12px arial
+	}
+
+	sup {
+		/* vertical-align: super; */
+		font-size: 11px;
+		color: darkblue;
+	}
+
+	p {
+		font-size: 24px;
+		line-height: 36px;
+		margin: 0;
+		/* background-image: linear-gradient(to right, #69B62F, #DE3375), url('/img/IMG_3705.jpg');
+    	background-blend-mode: overlay; */
+	}
+
+	.html2pdf__container {
+		font-size: 24px;
+		line-height: 36px;
+		text-decoration: none;
+		/* background-image: url('/img/IMG_3705.jpg');
+    	background-blend-mode: luminosity; */
+	}
+
+	img {
+		width: 400px;
+	}
+
+	table {
+		padding: 20px;
+	}
+</style>
+
+<script src="/js/jspdf/jspdf.debug.js"></script>
+<script src="https://code.jquery.com/jquery-git.js"></script>
+<script src="/lib/html2canvas/html2canvas.1.0.0-rc.1.js"></script>
+
+<script>
+	'use strict';
+
+	function useHtml() {
+		var pdf = new jsPDF('l', 'mm', 'a4');
+		var rendererDiv = document.createElement("div");
+		rendererDiv.innerHTML = "test text";
+		rendererDiv.setAttribute('id', 'test');
+		var x = document.getElementsByTagName("div");
+		var y = document.getElementById("test");
+		
+		console.log('rendererDiv: ');
+		console.log(rendererDiv);
+		console.log('document.getElementsByTagName("div"): ');
+		console.log(x);
+		console.log('document.getElementById("test"): ');
+		console.log(y);
+		
+		pdf.html(rendererDiv, {
+			filename: 'pdf',
+			html2canvas: {
+				backgroundColor: '#fdf5e8'
+			},
+			callback: function () {
+				window.open(pdf.output('bloburl'));
+				alert(y);
+			},
+		});
+	}
+
+	function html2canvas() {
+		var pdf = new jsPDF('l', 'mm', 'a4');
+		var rendererDiv = document.createElement("div");
+		// document.body.appendChild(rendererDiv);
+		// rendererDiv.textContent = "test text";
+
+		// html2canvas(rendererDiv).then(canvas => {
+		// 	document.body.appendChild(canvas);
+		// }); // infinite loop
+
+		// html2canvas(rendererDiv).then(canvas => {
+		// 	var strMime = "image/jpeg";
+		// 	let imgData = canvas.toDataURL(strMime);
+		// 	pdf.addImage(imgData, 0, 0, rendererDiv.clientWidth, rendererDiv.clientHeight);
+		// 	window.open(pdf.output('bloburl'));
+		// });
+	}
+</script>
+
+</html>
