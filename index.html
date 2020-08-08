@@ -112,7 +112,7 @@
 			<li>List 3</li>
 			<li>List 4</li>
 		</ul>
-		<p id="page" style="width: 718px;">
+		<p id="page">
 			Chapter 1<br><br />
 			<sup>1</sup><a href="https://kyleschaeffer.com/css-font-size-em-vs-px-vs-pt-vs-percent" target="_blank">In
 				the beginning God created the heavens and the earth.</a> <sup>2</sup>And the earth was waste and
@@ -325,7 +325,7 @@
         pdf.html(document.getElementById('2pdf'), {
             // width: 250, // this works under 2 conditions: 1) containerCSS can take this.opt.width (updated html.js); 2) source style, if any, is removed
 			// height: 250,
-			x: margin,
+			// x: margin,
 			html2canvas: {
                 // backgroundColor: 'lightyellow',
                 // width: 350, // this only affects backgroundColor, not content
@@ -449,12 +449,13 @@
 
 <script src="http://pdfmake.org/build/pdfmake.min.js"></script>
 <script src="http://pdfmake.org/build/vfs_fonts.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html-to-pdfmake/docs/browser.js"></script>
 <script>
 	function print() {
 		// open the PDF in a new window
 		pdfMake.createPdf(dd).open();
 
-		// html2canvas(document.querySelector('#pg')).then(canvas => {
+		// html2canvas(document.querySelector('#page')).then(canvas => {
 		// 	var data = canvas.toDataURL();
 		// 		var docDefinition = {
 		// 			content: [{
@@ -465,22 +466,29 @@
 		// 		pdfMake.createPdf(docDefinition).open();
 		// });
 	}
-
+	var el = document.getElementById('page').innerHTML;
+	var html = htmlToPdfmake(el);
 	var dd = {
-		content: [{
-			text: '	' + document.getElementById('2pdf').innerText,
-			lineHeight: 1.5,
-			// leadingIndent: 30,
-			margin: [20, 20, 20, 20]
-		}],
-		// footer: function(currentPage, pageCount) { return currentPage.toString() + ' of ' + pageCount; },
-		// header: function(currentPage, pageCount, pageSize) {
-		// 	// you can apply any logic and return any valid pdfmake element
-		// 	return [
-		// 	{ text: '07/06/2019', alignment: (currentPage % 2) ? 'left' : 'right' },
-		// 	{ canvas: [ { type: 'rect', x: 170, y: 32, w: pageSize.width - 170, h: 40 } ] }
-		// 	]
-		// }
+		content: [
+			html
+			// {
+			// 	text: '	' + document.getElementById('2pdf').innerText,
+			// 	lineHeight: 1.5,
+			// 	// leadingIndent: 30,
+			// 	margin: [20, 20, 20, 20]
+			// }
+		],
+		pageBreakBefore: function(currentNode) {
+			return currentNode.style && currentNode.style.indexOf('pdf-pagebreak-before') > -1;
+		},
+		footer: function(currentPage, pageCount) { return currentPage.toString() + ' of ' + pageCount; },
+		header: function(currentPage, pageCount, pageSize) {
+			// you can apply any logic and return any valid pdfmake element
+			return [
+			{ text: '07/06/2019', alignment: (currentPage % 2) ? 'left' : 'right' },
+			{ canvas: [ { type: 'rect', x: 170, y: 32, w: pageSize.width - 170, h: 40 } ] }
+			]
+		}
 	};
 </script>
 
